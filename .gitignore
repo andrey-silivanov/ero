@@ -1,0 +1,20 @@
+
+.env
+/public/bundles/
+/var/
+/vendor/
+
+.data
+.idea
+composer.lock
+
+###> symfony/phpunit-bridge ###
+.phpunit
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+/docker_confs/docker_volumes/elasticsearch/*
+/docker_confs/docker_volumes/mysql/*
+/docker_confs/docker_volumes/cassandra/*
+!/docker_confs/docker_volumes/elasticsearch/.gitkeep
+!/docker_confs/docker_volumes/mysql/.gitkeep
+

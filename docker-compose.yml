@@ -1,0 +1,119 @@
+version: '2.2'
+
+
+services:
+    mysql:
+        container_name: mysql
+        build: docker_confs/builds/mariadb/.
+        volumes:
+            - ./docker_confs/builds/mariadb/charset.cnf:/etc/mysql/conf.d/charset.cnf
+            - ./docker_confs/docker_volumes/mysql:/var/lib/mysql
+            - ./docker_confs/php7-fpm/configs/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            DB_ADMIN_PASS: ${MYSQL_ROOT_PASSWORD}
+        ports:
+            - "15306:3306"
+    php:
+        container_name: php
+        build: docker_confs/php7-fpm
+        volumes:
+            - ${SYMFONY_APP_PATH}:/code
+            - ${SYMFONY_APP_PATH}/var/log:/code/var/log
+            - ~/.ssh/:/root/.ssh/
+            - ./docker_confs/php7-fpm/configs/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+        links:
+            - mysql
+        environment:
+            XDEBUG_CONFIG: "remote_host=172.17.0.1"
+            DOCKER_HOST: "tcp://localhost:4243"
+            PHP_IDE_CONFIG: "serverName=docker"
+
+    phpunit:
+        container_name: rt_phpunit
+        build:
+            context: docker_confs/php7-fpm
+            args:
+                TIMEZONE: ${TIMEZONE}
+        volumes:
+        - ${SYMFONY_APP_PATH}:/code
+        - ${SYMFONY_APP_PATH}/var/log:/code/var/log
+        - ~/.ssh/:/root/.ssh/
+        - ./docker_confs/php7-fpm/configs/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+        links:
+        - mysql
+        environment:
+            XDEBUG_CONFIG: "remote_host=172.17.0.1"
+            DOCKER_HOST: "tcp://localhost:4243"
+            PHP_IDE_CONFIG: "serverName=docker"
+
+    nginx:
+        image: nginx:1.9.10
+        container_name: nginx
+        ports:
+            - "80:80"
+        volumes:
+            - ./docker_confs/nginx/ero.conf:/etc/nginx/conf.d/ero.conf
+        volumes_from:
+            - php
+        links:
+            - php
+
+    # redis:
+    #     container_name: 'rt_redis'
+    #     image: "redis:latest"
+    #     ports:
+    #         - "6379:6379"
+
+    # cassandra:
+    #     build: docker_confs/builds/cassandra/.
+    #     #image: cassandra:latest
+    #     container_name: 'rt_cassandra'
+    #     volumes:
+    #         - ./docker_confs/builds/cassandra/cassandra_scheme_docker.cql:/data/configs.cql
+    #         - ./docker_confs/docker_volumes/cassandra:/var/lib/cassandra
+
+    # elasticsearch:
+    #     container_name: 'rt_elastic'
+    #     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+    #     environment:
+    #         - cluster.name=docker-cluster
+    #         - bootstrap.memory_lock=true
+    #         - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
+    #         - xpack.security.enabled=false
+    #     ulimits:
+    #         memlock:
+    #             soft: -1
+    #             hard: -1
+    #         nofile:
+    #             soft: 65536
+    #             hard: 65536
+    #     mem_limit: 500m
+    #     cap_add:
+    #         - IPC_LOCK
+    #     volumes:
+    #         - ./docker_confs/docker_volumes/elasticsearch:/usr/share/elasticsearch/data
+    #     networks:
+    #         - default
+    #     ports:
+    #         - "19201:9200"
+
+    # cerebro:
+    #     image: yannart/cerebro:latest
+    #     ports:
+    #         - "10002:9000"
+    #     depends_on:
+    #         - elasticsearch
+    #     volumes:
+    #         - ./docker_confs/cerebro.conf:/cerebro/cerebro-0.4.0/conf/application.conf
+
+    # rabbitmq:
+    #     container_name: 'rt_rabbitmq'
+    #     image: rabbitmq:3.6.1-management
+    #     networks:
+    #         - default
+    #     ports:
+    #         - 5672
+    #         - "15673:15672"
