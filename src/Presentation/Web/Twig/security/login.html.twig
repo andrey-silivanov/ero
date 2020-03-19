@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+
+	<div class="container-fluid contact_us_bg_img">
+		<div class="container">
+			<div class="row">
+				<a href="#" class="fh5co_con_123"><i class="fa fa-sign-in"></i></a>
+				<a href="#" class="fh5co_con pt-2"> Sign in </a>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid pt-3">
+		<div class="container" data-animate-effect="fadeIn">
+			<div class="row pb-4">
+				<div class="col-md-6">
+					<form method="post" class="row" id="fh5co_contact_form">
+						<input type="hidden" name="_csrf_token"
+						       value="{{ csrf_token('authenticate') }}"
+						>
+
+						{% if error %}
+							<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+						{% endif %}
+
+						<div class="col-12 pt-2">
+							<h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+						</div>
+						<div class="col-12 py-3">
+							<label for="inputEmail" class="sr-only">Email</label>
+							<input type="email" value="{{ last_username }}" name="email" id="inputEmail"
+							       class="form-control fh5co_contact_text_box"
+							       placeholder="Email" required autofocus>
+						</div>
+						<div class="col-12 py-3">
+							<label for="inputPassword" class="sr-only">Password</label>
+							<input type="password" name="password" id="inputPassword" class="form-control fh5co_contact_text_box"
+							       placeholder="Password" required>
+						</div>
+
+
+						{#
+							Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+							See https://symfony.com/doc/current/security/remember_me.html
+
+							<div class="checkbox mb-3">
+								<label>
+									<input type="checkbox" name="_remember_me"> Remember me
+								</label>
+							</div>
+						#}
+						<div class="col-12 py-3 text-center">
+							<button class="btn btn-lg contact_btn" type="submit">
+								Sign in
+							</button>
+						</div>
+					</form>
+				</div>
+				<div class="col-md-6 animate-box">
+					<a href="single.html" class="fh5co_magna py-2"> Magna aliqua ut enim ad minim veniam quis
+						nostrud quis xercitation ullamco. </a> <a href="single.html" class="fh5co_mini_time py-3">
+						Thomson Smith -
+						April 18,2016 </a>
+					<div class="fh5co_consectetur"> Amet consectetur adipisicing elit, sed do eiusmod tempor incididunt
+						ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

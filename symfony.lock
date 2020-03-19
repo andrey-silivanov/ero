@@ -1,4 +1,7 @@
 {
+    "beberlei/assert": {
+        "version": "v3.2.7"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -106,7 +109,7 @@
         "version": "2.2.3"
     },
     "php": {
-        "version": "7.2"
+        "version": "7.4"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.0.0"
@@ -143,6 +146,12 @@
         "files": [
             "config/packages/sensio_framework_extra.yaml"
         ]
+    },
+    "simple-bus/message-bus": {
+        "version": "v3.1.0"
+    },
+    "simple-bus/symfony-bridge": {
+        "version": "v5.4.0"
     },
     "symfony/asset": {
         "version": "v5.0.4"
