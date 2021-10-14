@@ -3,28 +3,69 @@ declare(strict_types=1);
 
 namespace App\Presentation\Web\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Application\CommandBus\Command\AuthenticateUserCommand;
+use App\Presentation\Web\Form\LoginFormType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class SecurityController extends AbstractController
+class SecurityController extends MainController
 {
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/login", name="app_login", methods={"GET", "POST"})
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(Request $request): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        ////////////////////////////////////////////////////////////////////////////////////////
+        $form = $this->createForm(LoginFormType::class);
+
+        return $this->render('security/login.html.twig', [
+            'loginForm' => $form->createView(),
+        ]);
+
+        $form->handleRequest($request);
+
+        //dd($form->getErrors());
+        if ($form->isSubmitted() && $form->isValid()) {
+            // encode the plain password
+
+            //  $command = new RegisterUserCommand($form->getData());
+            $this->commandBus->handle($form->getData());
+
+
+//                        $user->setPassword(
+//                            $passwordEncoder->encodePassword(
+//                                $user,
+//                                $form->get('password')->getData()
+//                            )
+//                        );
+//
+//                        $entityManager = $this->getDoctrine()->getManager();
+//                        $entityManager->persist($user);
+//                        $entityManager->flush();
+//
+//            // do anything else you need here, like send an email
+//
+//            return $guardHandler->authenticateUserAndHandleSuccess(
+//                $user,
+//                $request,
+//                $authenticator,
+//                'main' // firewall name in security.yaml
+//            );
+        }
+
+        //dd($form->getErrors());
+
 
         // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
+   //     $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+     //   $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('security/login.html.twig', [
+            'loginForm' => $form->createView(),
+        ]);
     }
 
     /**

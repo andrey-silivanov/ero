@@ -25,7 +25,7 @@ abstract class StringValueObject
     /**
      * @return string
      */
-    public function value(): string
+    public function getValue(): string
     {
         return $this->value;
     }
@@ -35,6 +35,6 @@ abstract class StringValueObject
      */
     public function __toString():string
     {
-        return $this->value();
+        return $this->getValue();
     }
 }

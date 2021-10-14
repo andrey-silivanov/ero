@@ -1,16 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Domain\Entity;
+namespace App\Domain\User\Entity;
 
-use App\Domain\VO\User\UserPhoneVO;
+use App\Domain\User\VO\UserPhoneVO;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\VO(repositoryClass="App\Infrastructure\Repository\UserRepository")
- * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
+ * @ORM\Entity
  */
 class User implements UserInterface
 {
@@ -30,16 +28,16 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     * @ORM\Embedded(class="App\Domain\Model\Product\Price")
+     * @ORM\Embedded(class="App\Domain\User\VO\UserPhoneVO", columnPrefix = false)
      */
     private $phone;
 
-    public function __construct($username, $email, UserPhoneVO $phone)
+    public function __construct($username, $email, UserPhoneVO $phone, $password)
     {
         $this->username = $username;
         $this->email = $email;
         $this->phone = $phone;
+        $this->password = $password;
     }
 
     /**

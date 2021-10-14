@@ -2,10 +2,10 @@
 declare(strict_types=1);
 
 
-namespace App\Domain\Service\User;
+namespace App\Domain\User\Service\Contracts;
 
 
-use App\Domain\Entity\User;
+use App\Domain\User\Entity\User;
 
 /**
  * Interface UserRegisterInterface

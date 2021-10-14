@@ -1,7 +1,10 @@
 <?php
+declare(strict_types=1);
 
-namespace App\Security;
+namespace App\Infrastructure\Security;
 
+use App\Presentation\Web\Form\LoginFormType;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -25,12 +28,19 @@ class WebAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
+    private $formFactory;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(
+        UrlGeneratorInterface $urlGenerator,
+        CsrfTokenManagerInterface $csrfTokenManager,
+        UserPasswordEncoderInterface $passwordEncoder,
+        FormFactoryInterface $formFactory
+    )
     {
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->formFactory = $formFactory;
     }
 
     public function supports(Request $request)
@@ -41,11 +51,16 @@ class WebAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
 
     public function getCredentials(Request $request)
     {
+        dd($request->request);
+        $form = $this->formFactory->create(LoginFormType::class);
+        $form->handleRequest($request);
+        dd($form->getData());
         $credentials = [
-            'username' => $request->request->get('username'),
-            'password' => $request->request->get('password'),
+            'email'      => $request->request->get('email'),
+            'password'   => $request->request->get('password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
+        dd($credentials);
         $request->getSession()->set(
             Security::LAST_USERNAME,
             $credentials['username']
@@ -93,7 +108,7 @@ class WebAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
         }
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        throw new \Exception('TODO: provide a valid redirect inside ' . __FILE__);
     }
 
     protected function getLoginUrl()

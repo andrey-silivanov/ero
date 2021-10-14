@@ -1,14 +1,11 @@
 <?php
-
+declare(strict_types=1);
 
 namespace App\Application\CommandBus\Handler;
 
-
 use App\Application\CommandBus\Command\RegisterUserCommand;
-use App\Application\Factory\UserFactory;
-use App\Domain\Entity\User;
-use App\Domain\Service\User\UserManagerInterface;
-use App\Domain\VO\User\UserPhoneVO;
+use App\Domain\User\Factory\UserFactory;
+use App\Domain\User\Service\Contracts\UserManagerInterface;
 use App\Shared\Bus\Command\CommandHandler;
 
 final class RegisterUserCommandHandler implements CommandHandler
@@ -16,9 +13,7 @@ final class RegisterUserCommandHandler implements CommandHandler
 
     private $userManager;
 
-    /**
-     * RegisterUserCommandHandler constructor.
-     */
+
     public function __construct(UserManagerInterface $userManager)
     {
         $this->userManager = $userManager;
@@ -30,7 +25,8 @@ final class RegisterUserCommandHandler implements CommandHandler
             UserFactory::make(
                 $command->getUsername(),
                 $command->getEmail(),
-                $command->getPhone()
+                $command->getPhone(),
+                $command->getPassword()
             )
         );
     }

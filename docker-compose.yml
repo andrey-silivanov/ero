@@ -3,7 +3,7 @@ version: '2.2'
 
 services:
     mysql:
-        container_name: mysql
+        container_name: ero_mysql
         build: docker_confs/builds/mariadb/.
         volumes:
             - ./docker_confs/builds/mariadb/charset.cnf:/etc/mysql/conf.d/charset.cnf
@@ -15,9 +15,9 @@ services:
             MYSQL_PASSWORD: ${MYSQL_PASSWORD}
             DB_ADMIN_PASS: ${MYSQL_ROOT_PASSWORD}
         ports:
-            - "15306:3306"
+            - "15307:3306"
     php:
-        container_name: php
+        container_name: ero_php
         build: docker_confs/php7-fpm
         volumes:
             - ${SYMFONY_APP_PATH}:/code
@@ -32,7 +32,7 @@ services:
             PHP_IDE_CONFIG: "serverName=docker"
 
     phpunit:
-        container_name: rt_phpunit
+        container_name: ero_phpunit
         build:
             context: docker_confs/php7-fpm
             args:
@@ -51,9 +51,9 @@ services:
 
     nginx:
         image: nginx:1.9.10
-        container_name: nginx
+        container_name: ero_nginx
         ports:
-            - "80:80"
+            - "81:80"
         volumes:
             - ./docker_confs/nginx/ero.conf:/etc/nginx/conf.d/ero.conf
         volumes_from:

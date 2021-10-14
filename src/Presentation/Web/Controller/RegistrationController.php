@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Presentation\Web\Controller;
 
 use App\Application\CommandBus\Command\RegisterUserCommand;
-use App\Domain\Entity\User;
+use App\Infrastructure\Repository\UserRepository;
 use App\Presentation\Web\Form\RegistrationFormType;
 use App\Security\WebAuthenticator;
 use SimpleBus\SymfonyBridge\Bus\CommandBus;
@@ -15,32 +15,23 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
-class RegistrationController extends AbstractController
+class RegistrationController extends MainController
 {
-    private CommandBus $commandBus;
-    /**
-     * RegistrationController constructor.
-     */
-    public function __construct(CommandBus $commandBus)
-    {
-        $this->commandBus = $commandBus;
-    }
-
     /**
      * @Route("/register", name="app_register")
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, WebAuthenticator $authenticator): Response
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler): Response
     {
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
-           // dd($form->getData());
+
           //  $command = new RegisterUserCommand($form->getData());
 
             $this->commandBus->handle($form->getData());
-            dd('r', $r);
+
 /*
             $user->setPassword(
                 $passwordEncoder->encodePassword(

@@ -13,17 +13,20 @@ final class RegisterUserCommand extends AbstractCommand
      * @var string
      * @Assert\NotBlank()
      */
-    protected $username;
+    private $username;
 
     private $email;
 
     private $phone;
 
-    public function __construct($username, $email, $phone)
+    private $password;
+
+    public function __construct($username, $email, $phone, $password)
     {
         $this->username = $username;
         $this->email = $email;
         $this->phone = $phone;
+        $this->password = $password;
     }
 
     /**
@@ -48,5 +51,10 @@ final class RegisterUserCommand extends AbstractCommand
     public function getPhone()
     {
         return $this->phone;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
     }
 }

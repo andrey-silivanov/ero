@@ -13,7 +13,7 @@ services:
         bind:
             # pass this service for any LoggerInterface type-hint for any
             # service that's defined in this file
-            App\Domain\Service\User\UserCreatorInterface: '@user.creator'
+            App\Domain\User\Service\Contracts\UserCreatorInterface: '@user.creator'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -36,10 +36,15 @@ services:
         tags:
             - { name: command_handler, handles: App\Application\CommandBus\Command\RegisterUserCommand }
 
+    App\Application\CommandBus\Handler\AuthenticateUserCommandHandler:
+        public: true
+        tags:
+            - { name: command_handler, handles: App\Application\CommandBus\Command\AuthenticateUserCommand }
+
     #services
     ###  user ###
     user.creator:
-        class: 'App\Application\Service\User\UserCreator'
+        class: 'App\Domain\User\Service\UserCreator'
 
 #
 #

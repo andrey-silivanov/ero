@@ -17,29 +17,47 @@
 		<div class="container" data-animate-effect="fadeIn">
 			<div class="row pb-4">
 				<div class="col-md-6">
-					<form method="post" class="row" id="fh5co_contact_form">
+					{{ form_start(loginForm) }}
 						<input type="hidden" name="_csrf_token"
 						       value="{{ csrf_token('authenticate') }}"
 						>
 
-						{% if error %}
-							<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-						{% endif %}
+					{% if not loginForm.vars.valid %}
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-md-10">
+								<div class="alert alert-danger">
+									{{ 'validation_title' | trans }}
+									{{ form_errors(loginForm) }}
+								</div>
+							</div>
+						</div>
+					{% endif %}
 
 						<div class="col-12 pt-2">
 							<h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
 						</div>
 						<div class="col-12 py-3">
-							<label for="inputEmail" class="sr-only">Email</label>
-							<input type="email" value="{{ last_username }}" name="email" id="inputEmail"
-							       class="form-control fh5co_contact_text_box"
-							       placeholder="Email" required autofocus>
+							{{ form_widget(loginForm.phone, { 'attr': {'class': 'form-control fh5co_contact_text_box'} }) }}
+							{% if loginForm.phone.vars.errors|length %}
+							<div class="alert alert-danger">
+								{{ form_errors(loginForm.phone) }}
+							</div>
+							{% endif %}
 						</div>
-						<div class="col-12 py-3">
-							<label for="inputPassword" class="sr-only">Password</label>
-							<input type="password" name="password" id="inputPassword" class="form-control fh5co_contact_text_box"
-							       placeholder="Password" required>
+					<div class="col-12 py-3">
+						{{ form_widget(loginForm.email, { 'attr': {'class': 'form-control fh5co_contact_text_box'} }) }}
+
+						<div class="alert alert-danger">
+							{{ form_errors(loginForm.email) }}
 						</div>
+
+					</div>
+					<div class="col-12 py-3">
+						{{ form_widget(loginForm.password, { 'attr': {'class': 'form-control fh5co_contact_text_box'} }) }}
+						<div class="alert alert-danger">
+							{{ form_errors(loginForm.password) }}
+						</div>
+					</div>
 
 
 						{#
@@ -57,7 +75,7 @@
 								Sign in
 							</button>
 						</div>
-					</form>
+					{{ form_end(loginForm) }}
 				</div>
 				<div class="col-md-6 animate-box">
 					<a href="single.html" class="fh5co_magna py-2"> Magna aliqua ut enim ad minim veniam quis

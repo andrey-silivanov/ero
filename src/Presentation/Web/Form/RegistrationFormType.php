@@ -7,6 +7,7 @@ use App\Application\CommandBus\Command\RegisterUserCommand;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -38,6 +39,14 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
                     'placeholder' => 'Phone',
                 ],
             ])
+            ->add('password', PasswordType::class, [
+                // instead of being set onto the object directly,
+                // this is read and encoded in the controller
+                'label'       => false,
+                'mapped'      => false,
+                'attr' => [
+                    'placeholder' => 'Password',
+                ]])
             ->setDataMapper($this)
             /*->add('password', PasswordType::class, [
                 // instead of being set onto the object directly,
@@ -71,22 +80,24 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
         ;
     }
 
-    public function mapDataToForms($registrationDTO, iterable $forms): void
+    public function mapDataToForms($viewData, iterable $forms): void
     {
         $forms = iterator_to_array($forms);
-        $forms['username']->setData($registrationDTO ? $registrationDTO->getUsername() : '');
-        $forms['phone']->setData($registrationDTO ? $registrationDTO->getPhone() : '');
-        $forms['email']->setData($registrationDTO ? $registrationDTO->getEmail() : '');
+        $forms['username']->setData($viewData ? $viewData->getUsername() : '');
+        $forms['phone']->setData($viewData ? $viewData->getPhone() : '');
+        $forms['email']->setData($viewData ? $viewData->getEmail() : '');
+        $forms['password']->setData('');
     }
 
-    public function mapFormsToData(iterable $forms, &$registrationDTO)
+    public function mapFormsToData(iterable $forms, &$viewData)
     {
         $forms = iterator_to_array($forms);
 
-        $registrationDTO = RegisterUserCommand::createFromArray([
+        $viewData = RegisterUserCommand::createFromArray([
                 'username' => $forms['username']->getData() ?: null,
                 'phone'    => $forms['phone']->getData(),
                 'email'    => $forms['email']->getData(),
+                'password' => $forms['password']->getData()
             ]
         );
     }
@@ -94,7 +105,7 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-             'data_class' => RegisterUserCommand::class,
+            'data_class' => RegisterUserCommand::class,
             'empty_data' => null,
         ]);
     }
